@@ -8,7 +8,7 @@ def on_message(message, data):
         print(message['stack'])
 
 device = frida.get_usb_device()
-jsFunctionString = utils.constructStringFromJavaScriptFile("/home/xkyzara/Git/TUD/RevEng-PayPal/src/frida-python/js/functionScript.js")
+jsFunctionString = utils.constructStringFromJavaScriptFile("/home/xkyzara/Git/TUD/RevEng-PayPal/src/frida-python/js/moduleMap.js")
 # print(device.enumerate_applications())
 pid = device.spawn(["com.yourcompany.PPClient"])
 session = device.attach(pid)
