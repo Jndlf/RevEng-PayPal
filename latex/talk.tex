@@ -1,0 +1,97 @@
+\documentclass[accentcolor=tud8b,colorbacktitle,inverttitle,landscape,presentation,t]{tudbeamer}
+
+% usepackages
+\usepackage[utf8]{inputenc}
+
+\begin{document}
+
+% number sections in the table of contents
+\setbeamertemplate{section in toc}[sections numbered]
+
+% reset section numbering when starting a new part
+\makeatletter
+\AtBeginPart{\beamer@tocsectionnumber=0\relax\setcounter{section}{0}}
+\makeatother
+
+% your dates
+\newcommand{\myTitle}{Pay 'up Pal!}
+\newcommand{\myName}{Marius Gläss, Jacques Jurado \& Jan Spilker}
+\newcommand{\presentationType}{Target Architecture, Attack Vectors, Interfaces}
+
+\title{\myTitle}
+\subtitle{\myName\hfill \presentationType}
+\author{\myName}
+\institute[SEEMOO]{Secure Mobile Networking Lab, TU Darmstadt}
+\logo{\includegraphics{seemoo_logo.pdf}}
+\date{\today}
+
+\begin{titleframe}
+	\begin{center}
+	\includegraphics{ghidra_logo.png}
+	\end{center}
+\end{titleframe}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Overview
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Outline}
+
+\begin{frame}{\insertsubsection}
+	\tableofcontents[sectionstyle=show,subsectionstyle=hide]
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Components & Underlying Architecture
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Components \& Underlying Architecture}
+
+\begin{frame}{\insertsection}
+	Components \& Underlying Architecture
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Security Design Principles
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Security Design Principles}
+
+\begin{frame}{\insertsection}
+	Security Design Principles
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Third-Party Components
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Third-Party Components}
+
+\begin{frame}{\insertsection}
+	Third-Party Components
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Targets To Analyze
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Targets To Analyze}
+
+\begin{frame}{\insertsection}
+	Targets To Analyze
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Questions and Answers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Q\&A}
+\begin{frame}{\insertsection}
+	\topskip0pt
+	\vspace*{\fill}
+	\centering
+	\huge{Thank you for your attention!}%
+	\vspace*{\fill}
+\end{frame}
+
+\end{document}
