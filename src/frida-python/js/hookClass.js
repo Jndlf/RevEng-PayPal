@@ -1,5 +1,7 @@
-// var className = "LoginFlowStateManager"
-var className = "LoginFlowOrchestrator"
+var className = "LoginFlowStateManager"
+// var className = "LoginFlowOrchestrator"
+
+// var className = "FlowManager"
 
 // set debug level
 
@@ -11,13 +13,19 @@ var className = "LoginFlowOrchestrator"
  * + stack                      4
  */
 
-let debug_level = 4
+let debug_level = 3
 
 function observeClass(name) {
     var k = ObjC.classes[name];
+    // Find the module for the program itself, always at index 0:
+    const m = Process.enumerateModules()[0];
+    const baseAddr = Module.getBaseAddress(m.name);
+
     if (debug_level > 0){
         console.log("==========================================");
         console.log("==============  Game Start  ==============");
+        console.log("Base Address: ", baseAddr);
+        console.log("==========================================");
     }
     k.$ownMethods.forEach(function(m) {
         var impl = k[m].implementation;
@@ -29,11 +37,13 @@ function observeClass(name) {
         
         Interceptor.attach(impl, {
             onEnter: function(args) {
-                if (debug_level >= 3){
+                if (debug_level >= 1){
                     console.log("\n========== Enter function: "+m+" ==========");
+                
+                }
+                if (debug_level >= 3){
                     console.log("--------------Register------------------")
                 }
-                
                 var json_strcontext = JSON.stringify(this.context);
                 var json_obj = JSON.parse(json_strcontext);
                 
@@ -152,7 +162,7 @@ function observeClass(name) {
                     try
                     {
                         console.log("return function: "+ret);
-                         console.log(Memory.readByteArray(ret, 40));
+                        //console.log(Memory.readByteArray(ret, 40));
                     }
                     catch(e)
                     {       
