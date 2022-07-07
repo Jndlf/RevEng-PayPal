@@ -38,7 +38,7 @@ Interceptor.attach(funcMemAddr, {
 
         let arg0 = ptr(args[0]);
 
-        arg0.writeUtf8String("give me a crash pls");
+        arg0.writeUtf8String(fuzz_input(8));
 
         console.log("====================================================================");
     },
@@ -49,3 +49,17 @@ Interceptor.attach(funcMemAddr, {
         console.log(retval)
     }
 });
+
+// Hier anpassen, dass es zur oben angegebenen Function passt!
+var funcToCall = new NativeFunction(funcMemAddr, "int64", ["pointer", "int64"]);
+funcToCall();
+
+function fuzz_input(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }    
+    return result;
+}
