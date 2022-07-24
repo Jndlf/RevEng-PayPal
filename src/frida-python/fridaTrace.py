@@ -1,4 +1,5 @@
 import frida, utils
+import sys
 
 # debug function
 def on_message(message, data):
@@ -8,7 +9,10 @@ def on_message(message, data):
         print(message['stack'])
 
 device = frida.get_usb_device()
-jsFunctionString = utils.constructStringFromJavaScriptFile("/home/xkyzara/Git/TUD/RevEng-PayPal/src/frida-python/js/moduleMap.js")
+jsFunctionString = utils.constructStringFromJavaScriptFile("js/overwriteRetAddrContent.js")
+#jsFunctionString = utils.constructStringFromJavaScriptFile("js/findFunctionAndTrace.js")
+#jsFunctionString = utils.constructStringFromJavaScriptFile("js/hookClass.js")
+#jsFunctionString = utils.constructStringFromJavaScriptFile("js/overwriteFuncParams.js")
 # print(device.enumerate_applications())
 pid = device.spawn(["com.yourcompany.PPClient"])
 session = device.attach(pid)
@@ -16,5 +20,7 @@ script = session.create_script(jsFunctionString)
 script.on('message', on_message)
 script.load()
 device.resume(pid)
+#utils.stripGhidraCopyToInstructionBytes("data/entry.txt")
 
-#sys.stdin.read()
+sys.stdin.read()
+

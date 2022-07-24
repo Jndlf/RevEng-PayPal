@@ -1,7 +1,9 @@
-var className = "LoginFlowStateManager"
+// var className = "LoginFlowStateManager"
 // var className = "LoginFlowOrchestrator"
 
-// var className = "FlowManager"
+// var className = "PFSplitPasswordViewController"
+// var className = "PFDataTransaction"
+var className = "PFAccountCredentials"
 
 // set debug level
 
@@ -13,7 +15,7 @@ var className = "LoginFlowStateManager"
  * + stack                      4
  */
 
-let debug_level = 3
+let debug_level = 2
 
 function observeClass(name) {
     var k = ObjC.classes[name];
@@ -29,6 +31,10 @@ function observeClass(name) {
     }
     k.$ownMethods.forEach(function(m) {
         var impl = k[m].implementation;
+        if (debug_level > 3){
+            console.log("DEBUG: ", impl.readByteArray(32))
+        }
+        
 
         if (debug_level > 0){
             console.log('Hooking ' + name + ' ' + m);
@@ -37,6 +43,7 @@ function observeClass(name) {
         
         Interceptor.attach(impl, {
             onEnter: function(args) {
+                
                 if (debug_level >= 1){
                     console.log("\n========== Enter function: "+m+" ==========");
                 
@@ -73,10 +80,22 @@ function observeClass(name) {
                 if (debug_level >= 2){
                     try
                     {
-                        
+                        let storedBytes = Memory.readByteArray(a0, 5);
                         console.log("--------------param0--------------");
-                        console.log("param 0: "+a0);
-                        console.log(Memory.readByteArray(a0, 100));
+                        console.log("param 0 - original: "+a0);
+                        console.log(storedBytes);
+
+                        // follow the pointer that is found at the desired memory location
+                        // it seems to be saved in little endian format, that's why we need 
+                        // to convert it
+                        let converted = convertLEtoBE(storedBytes, 5, 0);
+                        console.log("param 0 - decoded: " + converted);
+                        console.log("param 0 - pointer followed");
+                        
+                        let followedBytes = Memory.readByteArray(ptr(converted), 32);
+                        console.log(followedBytes);
+                        
+                        
                     }
                     catch(e)
                     {
@@ -98,7 +117,29 @@ function observeClass(name) {
                     {
                         console.log("--------------param2--------------");
                         console.log("param 2: "+a2);
-                        console.log(Memory.readByteArray(a2, 100));
+                        let storedBytes = Memory.readByteArray(a2, 100); 
+                        console.log(storedBytes);
+
+                        // following pointers, following pointers, ...
+                        // decide how deep you want to go
+                        let converted = convertLEtoBE(storedBytes, 5, 0);
+                        console.log("param 2 - decoded: " + converted);
+                        console.log("param 2 - pointer followed");
+                        
+                        let followedBytes = Memory.readByteArray(ptr(converted), 32);
+                        console.log(followedBytes);
+                            
+                        let converted2 = convertLEtoBE(followedBytes, 5, 1);
+                        console.log("param 2 - followed depth: 2");
+                        console.log("param 2 - decoded: " + converted2);
+                        let followedBytes2 = Memory.readByteArray(ptr(converted2), 8);
+                        console.log(followedBytes2);
+
+                        let converted3 = convertLEtoBE(followedBytes2, 5, 0);
+                        console.log("param 2 - followed depth: 3");
+                        console.log("param 2 - decoded: " + converted3);
+                        let followedBytes3 = Memory.readByteArray(ptr(converted3), 8);
+                        console.log(followedBytes3);
                     }
                     catch(e)
                     {
@@ -156,22 +197,50 @@ function observeClass(name) {
             
 
             onLeave: function(retval) {
+                // overwrite return values of function m (set m manually)
+                if (m == "- canMoveFromState:toState:") {
+                    retval.replace(0);
+                }
+
+                if (m == "- currentState") {
+                    retval.replace(0);
+                }
+
                 if (debug_level >= 1){
                 console.log("\n========== Leave function: "+m+"==========");
                     var ret = ptr(retval);
-                    try
-                    {
-                        console.log("return function: "+ret);
-                        //console.log(Memory.readByteArray(ret, 40));
-                    }
-                    catch(e)
-                    {       
-                            console.log("ret value couldn't beretrieved ", e, "\n");
+                    if (debug_level > 1){
+                        try
+                        {
+                            console.log("return function: "+ret+" "+m);
+                            //console.log(Memory.readByteArray(ret, 40));
+                        }
+                        catch(e)
+                        {       
+                                console.log("ret value couldn't beretrieved ", e, "\n");
+                        }
                     }
                 }
             }
         });
     });
+}
+
+// takes an ArrayBuffer as input and converts the first 'len' bytes to
+// big endian, i.e. reversing the byte order and return the result as a
+// string. The result can then be used to create e.g. a new Native Pointer
+function convertLEtoBE(arraybuf, len, offset){
+    let decoded = new Uint8Array(arraybuf);
+    let decString = '0x';
+
+    // create a hex character from each obtained original character
+    // and reverse the order
+    for(let i = len -1 + offset; i >= offset; i--){
+        //console.log("Adding: " + decoded[i].toString(16).padStart(2, "0"));
+        decString += (decoded[i].toString(16).padStart(2, "0"));
+    }
+
+    return decString;
 }
 
 
