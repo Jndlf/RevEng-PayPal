@@ -20,7 +20,7 @@ const m = Process.enumerateModules()[0];
 const baseAddr = Module.getBaseAddress(m.name);
 
 // If your address is 0x10013acf4, your offset is 0x13acf4 
-const funcOffset = 0x7f2978;
+const funcOffset = 0x524f0c;
 
 // convert it to int for easier arithmetic (and NativePointer can take int as argument)
 const funcOffsetInt = parseInt(funcOffset);
@@ -40,10 +40,10 @@ const reg = false;
 // indicate the span of params that will be printed
 // first param has index 0, last param index length -1
 const firstParam = 0;
-const lastParam = 1;
+const lastParam = 2;
 
 // indices params, whose MEMORY CONTENT will be printed
-const paramMemContent = [0, 1, 2, 3, 4];
+const paramMemContent = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 
 // save the address of an object that will be modified  throughout the function processting
@@ -108,7 +108,7 @@ Interceptor.attach(funcMemAddr, {
         // in 2Bytes, typically 5 to fit the 64 bit addresses in the given format
         let addrSize = 5;
         // typically 0, but can be any offset withing the content size
-        let addrOffset = 0;
+        let addrOffset = 16;
         // how often do you want to perform the process of following the pointer with those params? (min 1 for something to happen)
         let depth = 1;
         // where to apply the offset (first level or second level, or maybe even later)
@@ -133,19 +133,29 @@ Interceptor.attach(funcMemAddr, {
         // for more params
 
         /*
-        addrLocation = arg_list[3];
+        addrLocation = arg_list[4];
         addrSize = 5;
-        addrOffset = 0;
-        depth = 3;
+        addrOffset = 32;
+        depth = 2;
         offsetDepth = 0;
 
         console.log("---------------- Address: ", addrLocation, " ----------------");
         followPointer(addrLocation, addrSize, addrOffset, depth, offsetDepth);
 
-        addrLocation = arg_list[4];
+        addrLocation = arg_list[5];
         addrSize = 5;
-        addrOffset = 0;
-        depth = 3;
+        addrOffset = 32;
+        depth = 2;
+        offsetDepth = 0;
+
+        console.log("---------------- Address: ", addrLocation, " ----------------");
+        followPointer(addrLocation, addrSize, addrOffset, depth, offsetDepth);
+
+
+        addrLocation = arg_list[6];
+        addrSize = 5;
+        addrOffset = 16;
+        depth = 2;
         offsetDepth = 0;
 
         console.log("---------------- Address: ", addrLocation, " ----------------");
@@ -181,7 +191,7 @@ Interceptor.attach(funcMemAddr, {
         console.log("=============== Leaving function and printing ret val ==============");
         
         var r = ptr(retval)
-        let rContent = getMemContent(r, 80, true);
+        let rContent = getMemContent(r, 160, true);
         
 
         // following
@@ -190,7 +200,7 @@ Interceptor.attach(funcMemAddr, {
         let addrSize = 5;
         let addrOffset = 16;
         let depth = 1;
-        let offsetDepth = 0;
+        let offsetDepth = 1;
 
         console.log("---------------- Address: ", r, " ----------------");
         followPointer(addrLocation, addrSize, addrOffset, depth, offsetDepth);
@@ -236,11 +246,8 @@ function getMemContent(address, size, print_flag){
 // big endian, i.e. reversing the byte order and return the result as a
 // string. The result can then be used to create e.g. a new Native Pointer
 function convertLEtoBE(arraybuf, len, offset){
-    console.log("convertDebugging");
-    console.log(arraybuf)
+
     const decoded = new Uint8Array(arraybuf);
-    console.log("-");
-    console.log(decoded);
     let decString = '0x';
 
     const decLen = decoded.length;
@@ -306,7 +313,7 @@ function followPointer(address, size, offset, depth, offset_depth){
         }
         console.log("---------------- depth ", i, " -------------");
         console.log("Mem addr to print (via getMemContent): ", memBuffer);
-        memBuffer = getMemContent(memBuffer, size + 32, true);
+        memBuffer = getMemContent(memBuffer, size + 128, true);
         console.log("-------------------------------------------------");
         
         appliedOffset = 0;
